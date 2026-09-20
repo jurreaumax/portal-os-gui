@@ -1,3 +1,7 @@
-import { useState } from 'react';
-export default function BeeSim() { const [running, setRunning] = useState(false); const [stats, setStats] = useState({ bees: 42, temperature: 34.5, activity: 68 }); const reset = () => { setRunning(false); setStats({ bees: 42, temperature: 34.5, activity: 68 }); }; return <div><div className="sim-grid"><Metric label="Bee count" value={stats.bees} /><Metric label="Hive temperature" value={`${stats.temperature}°C`} /><Metric label="Activity level" value={`${stats.activity}%`} /></div><div className="button-row"><button onClick={() => setRunning(true)}>Start simulation</button><button onClick={() => setRunning(false)}>Stop simulation</button><button onClick={reset}>Reset simulation</button></div><p>{running ? 'Simulation running (placeholder).' : 'Simulation stopped.'}</p></div>; }
-function Metric({ label, value }) { return <article className="metric"><span>{label}</span><strong>{value}</strong></article>; }
+import { useUAL } from '../umbrella/UALProvider';
+
+export default function BeeSim() {
+  const { state } = useUAL(); const sim = state.sim?.data ?? state.sim;
+  if (!sim) return <p>Loading BeeSim…</p>;
+  return <div><h3>Simulation Pack</h3><pre>{JSON.stringify(sim, null, 2)}</pre><p>Simulation state is managed by the Unified Access Layer.</p></div>;
+}
