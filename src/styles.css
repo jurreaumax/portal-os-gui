@@ -1,0 +1,4 @@
+* { box-sizing: border-box; }
+:root { font-family: Inter, system-ui, sans-serif; color: #edf4ec; background:#070a0d; }
+html, body, #root { margin:0; min-width:320px; min-height:100vh; }
+button { color:inherit; font:inherit; }

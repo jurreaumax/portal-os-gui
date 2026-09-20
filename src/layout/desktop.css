@@ -1,0 +1,5 @@
+.desktop-shell { position: relative; width: 100%; height: 100vh; overflow: hidden; background: radial-gradient(circle at top, rgba(59,130,246,.18), transparent 35%), linear-gradient(160deg,#09111d,#0f172a); }
+.desktop-header { display:flex; justify-content:space-between; padding:24px; color:#9bf7c6; font:12px monospace; letter-spacing:.15em; }
+.desktop-header span { color:#94a3b8; }
+pre { max-height:260px; overflow:auto; font-size:12px; }
+.error { color:#ff907d; }
