@@ -1,5 +1,5 @@
-import { API } from './client';
+import { API } from './api';
 
-export function fetchIdentity() {
-  return API.get('/api/umbrella/identity');
+export function fetchIdentity(token) {
+  return API.post('/umbrella/identity/license', {}, { token });
 }

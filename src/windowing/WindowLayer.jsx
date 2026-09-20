@@ -1,10 +1,2 @@
-import React from 'react';
-
-export default function WindowLayer({ windows, manager, renderApp }) {
-  return <div className="window-layer">{windows.map((window) => (
-    <section className="window" key={window.id} style={{ left: window.x, top: window.y, width: window.w, height: window.h }}>
-      <header className="window-titlebar"><span>{window.title}</span><button onClick={() => manager.closeWindow(window.id)} aria-label="Close">×</button></header>
-      <div className="window-content">{renderApp(window.appId)}</div>
-    </section>
-  ))}</div>;
-}
+import React, { useRef } from 'react';
+export default function WindowLayer({ windows, manager, renderApp }) { const drag = useRef(null); const start = (event, window) => { manager.focusWindow(window.id); drag.current = { id: window.id, x: event.clientX, y: event.clientY, ox: window.x, oy: window.y }; }; const move = (event) => { if (!drag.current) return; const d = drag.current; manager.updateWindow(d.id, { x: Math.max(0, d.ox + event.clientX - d.x), y: Math.max(0, d.oy + event.clientY - d.y) }); }; const stop = () => { if (drag.current) { const current = windows.find((window) => window.id === drag.current.id); if (current && (current.x < 16 || current.y < 16)) manager.updateWindow(current.id, { x: 0, y: 0, w: window.innerWidth, h: window.innerHeight - 48 }); } drag.current = null; }; return <div className="window-layer" onMouseMove={move} onMouseUp={stop}>{windows.map((window) => <section className={`window ${window.minimized ? 'minimized' : ''}`} key={window.id} onMouseDown={() => manager.focusWindow(window.id)} style={{ left: window.x, top: window.y, width: window.w, height: window.h, zIndex: window.z }}><header className="window-titlebar" onMouseDown={(event) => start(event, window)}><span>{window.title}</span><div><button onClick={() => manager.updateWindow(window.id, { minimized: true })}>−</button><button onClick={() => manager.updateWindow(window.id, { maximized: !window.maximized, x: window.maximized ? 120 : 0, y: window.maximized ? 90 : 0, w: window.maximized ? 520 : window.innerWidth, h: window.maximized ? 340 : window.innerHeight - 48 })}>□</button><button onClick={() => manager.closeWindow(window.id)}>×</button></div></header>{!window.minimized && <div className="window-content">{renderApp(window.appId)}</div>}</section>)}</div>; }

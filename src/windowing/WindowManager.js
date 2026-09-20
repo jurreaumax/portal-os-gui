@@ -1,15 +1,1 @@
-export function createWindowManager() {
-  let windows = [];
-  let listeners = [];
-  const notify = () => listeners.forEach((listener) => listener([...windows]));
-  return {
-    subscribe(listener) {
-      listeners.push(listener); listener([...windows]);
-      return () => { listeners = listeners.filter((item) => item !== listener); };
-    },
-    openWindow(appId, title) {
-      windows = [...windows, { id: crypto.randomUUID(), appId, title, x: 120, y: 90, w: 520, h: 340 }]; notify();
-    },
-    closeWindow(id) { windows = windows.filter((window) => window.id !== id); notify(); },
-  };
-}
+export function createWindowManager() { let windows = JSON.parse(localStorage.getItem('portal-os-windows') || '[]'); let listeners = []; const save = () => localStorage.setItem('portal-os-windows', JSON.stringify(windows)); const notify = () => { save(); listeners.forEach((listener) => listener([...windows])); }; return { subscribe(listener) { listeners.push(listener); listener([...windows]); return () => { listeners = listeners.filter((item) => item !== listener); }; }, getWindows() { return [...windows]; }, openWindow(appId, title) { const existing = windows.find((window) => window.appId === appId); if (existing) { windows = windows.map((window) => window.id === existing.id ? { ...window, minimized: false, z: Date.now() } : window); } else windows = [...windows, { id: crypto.randomUUID(), appId, title, x: 120, y: 90, w: 520, h: 340, z: Date.now(), minimized: false, maximized: false }]; notify(); }, closeWindow(id) { windows = windows.filter((window) => window.id !== id); notify(); }, updateWindow(id, patch) { windows = windows.map((window) => window.id === id ? { ...window, ...patch, z: Date.now() } : window); notify(); }, focusWindow(id) { this.updateWindow(id, { minimized: false }); } }; }
